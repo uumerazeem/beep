@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:asignment/controllers/auth_Controller.dart';
 import 'package:asignment/controllers/lang_controller.dart';
 import 'package:asignment/screens/auth/signup_screen.dart';
 import 'package:asignment/screens/select_language.dart';
@@ -24,6 +25,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool startAnimation = false;
   LanguageController languageController = Get.find();
+  AuthController authController = Get.put(AuthController());
 
   @override
   void initState() {
