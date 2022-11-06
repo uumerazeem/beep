@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:asignment/controllers/lang_controller.dart';
 import 'package:asignment/screens/auth/login_screen.dart';
 import 'package:asignment/utils/app_colors.dart';
 import 'package:asignment/utils/app_images.dart';
@@ -14,7 +15,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
+LanguageController languageController = Get.put(LanguageController());
 @override
   void initState() {
     super.initState();

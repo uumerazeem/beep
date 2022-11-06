@@ -1,3 +1,4 @@
+import 'package:asignment/controllers/lang_controller.dart';
 import 'package:asignment/screens/auth/verification_screen.dart';
 import 'package:asignment/utils/app_colors.dart';
 import 'package:asignment/utils/app_icons.dart';
@@ -12,7 +13,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({super.key});
+   SignUpScreen({super.key});
+  LanguageController languageController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -83,23 +85,23 @@ class SignUpScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Align(
-                    alignment: Alignment.topLeft,
+                    alignment: languageController.isEnglish.value?  Alignment.topLeft  : Alignment.topRight,
                     child: Text.rich(
                       textAlign: TextAlign.left,
                       TextSpan(children: [
                         TextSpan(
-                          text: "Sign Up to",
+                          text: "Sign Up to".tr,
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 24.sp,
-                              fontFamily: "Poppins-Regular"),
+                              fontFamily: languageController.isEnglish.value? "Poppins-Regular":  "NotoKufiArabic-Bold"),
                         ),
                         TextSpan(
-                          text: " Beep Alla Beep",
+                          text: " Beep Alla Beep".tr,
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 24.sp,
-                              fontFamily: "Poppins-Semibold"),
+                              fontFamily:languageController.isEnglish.value?  "Poppins-Semibold":  "NotoKufiArabic-Bold"),
                         ),
                       ], style: const TextStyle(height: 1.2)),
                     ),
@@ -108,12 +110,15 @@ class SignUpScreen extends StatelessWidget {
                  SizedBox(
                   height: 25.h,
                  ),
-                  Text(
-                    "Please fill out the form below to Register on Beep Alla Beep.?",
-                    style: TextStyle(
-                        color: AppColor.offWhite,
-                        fontSize: 16.sp,
-                        fontFamily: "Poppins-Regular"),
+                  Align(
+                    alignment: languageController.isEnglish.value?  Alignment.topLeft  : Alignment.topRight,
+                    child: Text(
+                      "Please fill out the form below to Register on Beep Alla Beep?".tr,
+                      style: TextStyle(
+                          color: AppColor.offWhite,
+                          fontSize:languageController.isEnglish.value? 16.sp :24.sp,
+                          fontFamily: languageController.isEnglish.value? "Poppins-Regular": "Arabic-Regular"),
+                    ),
                   ),
                   Column(
                     children: [
@@ -125,7 +130,7 @@ class SignUpScreen extends StatelessWidget {
                             height: 16.h,
                             width: 16.w,
                           ),
-                          hintText: 'Full Name',
+                          hintText: 'Full Name'.tr,
                           isEnglish: true,
                           isPassword: false,
                       ),
@@ -150,7 +155,7 @@ class SignUpScreen extends StatelessWidget {
                             height: 21.h,
                             width: 16.w,
                           ),
-                          hintText: 'Password',
+                          hintText: 'Password'.tr,
                           isEnglish: true,
                           isPassword: true,
                         ),
@@ -161,14 +166,15 @@ class SignUpScreen extends StatelessWidget {
                             height: 21.h,
                             width: 16.w,
                           ),
-                          hintText: 'Confirm Password',
+                          hintText: 'Confirm Password'.tr,
                           isEnglish: true,
                           isPassword: true,
                         ),
                       
                     ],
                   ),
-                  Padding(
+                  
+             languageController.isEnglish.value== false? SizedBox(height: 20.r,):     Padding(
                   padding: EdgeInsets.symmetric(vertical: 30.r),
                     child: Text.rich(
                       textAlign: TextAlign.left,
@@ -204,7 +210,7 @@ class SignUpScreen extends StatelessWidget {
                       ], style: const TextStyle(height: 1.2)),
                     ),
                   ),
-                  FullWidthButton(buttonName: "Sign Up", onPressed: () {
+                  FullWidthButton(buttonName: "Sign Up".tr, onPressed: () {
 
                     Get.to(VerifyScreen());
 
@@ -216,7 +222,10 @@ class SignUpScreen extends StatelessWidget {
                       onTap: (){
                         Get.back();
                       },
-                      child: Text.rich(
+                      child: 
+                      languageController.isEnglish.value?
+                      
+                      Text.rich(
                         textAlign: TextAlign.left,
                         TextSpan(children: [
                           TextSpan(
@@ -234,7 +243,26 @@ class SignUpScreen extends StatelessWidget {
                                 fontFamily: "Poppins-Semibold"),
                           ),
                         ], style: const TextStyle(height: 1.2)),
-                      ),
+                      ):
+                      Text.rich(
+                    
+                        TextSpan(children: [
+                          TextSpan(
+                            text: " هل لديك حساب؟",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.sp,
+                                fontFamily: "Poppins-Regular"),
+                          ),
+                          TextSpan(
+                            text: "تسجيل الدخول",
+                            style: TextStyle(
+                                color: AppColor.scondary,
+                                fontSize: 16.sp,
+                                fontFamily: "Poppins-Semibold"),
+                          ),
+                        ], style: const TextStyle(height: 1.2)),
+                      )
                     ),
                   ),
                 ],

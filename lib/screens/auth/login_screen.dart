@@ -1,8 +1,12 @@
+import 'dart:developer';
+
+import 'package:asignment/controllers/lang_controller.dart';
 import 'package:asignment/screens/auth/signup_screen.dart';
 import 'package:asignment/screens/select_language.dart';
 import 'package:asignment/utils/app_colors.dart';
 import 'package:asignment/utils/app_icons.dart';
 import 'package:asignment/utils/app_images.dart';
+import 'package:asignment/utils/shared_pref.dart';
 import 'package:asignment/widgets/custom_input_field.dart';
 import 'package:asignment/widgets/full_width_button.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +23,27 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool startAnimation = false;
+  LanguageController languageController = Get.find();
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    bool? state = await PreferencesService.getSelectedLanguage();
+
+
+    if (state != null) {
+      setState(() {
+        if (mounted) {
+          startAnimation = true;
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,30 +131,38 @@ class _LoginScreenState extends State<LoginScreen> {
                   Padding(
                     padding: EdgeInsets.only(top: 30.r),
                     child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text.rich(
-                        textAlign: TextAlign.left,
-                        TextSpan(children: [
-                          TextSpan(
-                            text:
-                                startAnimation == false ? "Choose" : "Login to",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24.sp,
-                                fontFamily: "Poppins-Regular"),
-                          ),
-                          TextSpan(
-                            text: startAnimation == false
-                                ? "\nYour Language"
-                                : "\nYour Account",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24.sp,
-                                fontFamily: "Poppins-Semibold"),
-                          ),
-                        ], style: const TextStyle(height: 1.2)),
-                      ),
-                    ),
+                        alignment: languageController.isEnglish.value
+                            ? Alignment.topLeft
+                            : Alignment.topRight,
+                        child: languageController.isEnglish.value
+                            ? Text.rich(
+                                textAlign: TextAlign.left,
+                                TextSpan(children: [
+                                  TextSpan(
+                                    text: startAnimation == false
+                                        ? "Choose"
+                                        : "Login to",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24.sp,
+                                        fontFamily: "Poppins-Regular"),
+                                  ),
+                                  TextSpan(
+                                    text: startAnimation == false
+                                        ? "\nYour Language"
+                                        : "\nYour Account",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24.sp,
+                                        fontFamily: "Poppins-Semibold"),
+                                  ),
+                                ], style: const TextStyle(height: 1.2)),
+                              )
+                            : Text("تسجيل الدخول إلى حسابك",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24.sp,
+                                    fontFamily: "NotoKufiArabic-Bold"))),
                   ),
                   AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
@@ -145,7 +178,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                       AppIcon.phone,
                                       height: 22.h,
                                       width: 14.w,
-                                      
                                     ),
                                     hintText: '(0)',
                                     isEnglish: true,
@@ -153,17 +185,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                     isPhone: true,
                                   ),
                                 ),
-                                 CustomInputField(
-                                  fieldIcon: Image.asset(AppIcon.lock, height: 21.h, width: 16.w,),
+                                CustomInputField(
+                                  fieldIcon: Image.asset(
+                                    AppIcon.lock,
+                                    height: 21.h,
+                                    width: 16.w,
+                                  ),
                                   hintText: 'Password',
                                   isEnglish: true,
                                   isPassword: true,
-                                  
                                 ),
                               ],
                             )),
-                 
-                 
                   SizedBox(
                     height: 25.h,
                   ),
@@ -173,13 +206,22 @@ class _LoginScreenState extends State<LoginScreen> {
                             setState(() {
                               startAnimation = true;
                             });
+
+                            languageController.changeLanguage(
+                                languageController.isEnglish.value
+                                    ? "en"
+                                    : "ar",
+                                languageController.isEnglish.value
+                                    ? "US"
+                                    : "SA");
                           }
                         : () {
                             setState(() {
                               startAnimation = false;
                             });
                           },
-                    buttonName: startAnimation == false ? "Continue" : "Login",
+                    buttonName:
+                        startAnimation == false ? "Continue" : "Login".tr,
                   ),
                   startAnimation == false
                       ? SizedBox()
@@ -188,11 +230,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             Padding(
                               padding: EdgeInsets.symmetric(vertical: 30.r),
                               child: Text(
-                                "Forget Password?",
+                                languageController.isEnglish.value
+                                    ? "Forget Password?"
+                                    : "نسيت كلمة السر؟",
                                 style: TextStyle(
                                     color: AppColor.scondary,
                                     fontSize: 16.sp,
-                                    fontFamily: "Poppins-Semibold"),
+                                    fontFamily:
+                                        languageController.isEnglish.value
+                                            ? "Poppins-Semibold"
+                                            : "Arabic-Regular"),
                               ),
                             ),
                             SizedBox(
@@ -202,25 +249,45 @@ class _LoginScreenState extends State<LoginScreen> {
                               onTap: () {
                                 Get.to(() => SignUpScreen());
                               },
-                              child: Text.rich(
-                                textAlign: TextAlign.left,
-                                TextSpan(children: [
-                                  TextSpan(
-                                    text: "Don’t have an account?",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16.sp,
-                                        fontFamily: "Poppins-Regular"),
-                                  ),
-                                  TextSpan(
-                                    text: " Sign Up",
-                                    style: TextStyle(
-                                        color: AppColor.scondary,
-                                        fontSize: 16.sp,
-                                        fontFamily: "Poppins-Semibold"),
-                                  ),
-                                ], style: const TextStyle(height: 1.2)),
-                              ),
+                              child: languageController.isEnglish.value
+                                  ? Text.rich(
+                                      textAlign: TextAlign.left,
+                                      TextSpan(children: [
+                                        TextSpan(
+                                          text: "Don’t have an account?",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16.sp,
+                                              fontFamily: "Poppins-Semibold"),
+                                        ),
+                                        TextSpan(
+                                          text: "Sign Up",
+                                          style: TextStyle(
+                                              color: AppColor.scondary,
+                                              fontSize: 16.sp,
+                                              fontFamily: "Poppins-Semibold"),
+                                        ),
+                                      ], style: const TextStyle(height: 1.2)),
+                                    )
+                                  : Text.rich(
+                                      textAlign: TextAlign.left,
+                                      TextSpan(children: [
+                                        TextSpan(
+                                          text: "ليس لديك حساب؟",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16.sp,
+                                              fontFamily: "Poppins-Regular"),
+                                        ),
+                                        TextSpan(
+                                          text: "قم بالتسجيل من هنا",
+                                          style: TextStyle(
+                                              color: AppColor.scondary,
+                                              fontSize: 16.sp,
+                                              fontFamily: "Poppins-Semibold"),
+                                        ),
+                                      ], style: const TextStyle(height: 1.2)),
+                                    ),
                             ),
                           ],
                         )
