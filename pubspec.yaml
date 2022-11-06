@@ -89,9 +89,12 @@ flutter:
     - family: Poppins-SemiBold
       fonts:
         - asset: assets\fonts\Poppins-SemiBold.ttf
-    - family: NKArabic-Bold
+    - family: NotoKufiArabic-Bold
       fonts:
         - asset: assets\fonts\NotoKufiArabic-Bold.ttf
+    - family: Arabic-Regular
+      fonts:
+        - asset: assets\fonts\Adobe Arabic Regular.otf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
