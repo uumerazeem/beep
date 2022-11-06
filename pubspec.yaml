@@ -40,6 +40,10 @@ dependencies:
   get: ^4.6.5
   pin_input_text_field: ^4.2.0
   shared_preferences: ^2.0.15
+  firebase_core: ^2.1.1
+  firebase_auth: ^4.1.1
+  cloud_firestore: ^4.0.4
+  uuid: ^3.0.6
 
 dev_dependencies:
   flutter_test:

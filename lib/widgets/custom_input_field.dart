@@ -11,7 +11,7 @@ class CustomInputField extends StatefulWidget {
   bool isPassword;
   bool? isPhone;
   TextEditingController? controller = TextEditingController();
-
+TextInputType? keyboardType;
   CustomInputField(
       {Key? key,
       required this.fieldIcon,
@@ -19,6 +19,7 @@ class CustomInputField extends StatefulWidget {
       required this.isEnglish,
       required this.isPassword,
       this.controller,
+      this.keyboardType,
       this.isPhone})
       : super(key: key);
 
@@ -66,7 +67,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
                   controller: widget.controller,
                   textAlign: widget.isEnglish ? TextAlign.start : TextAlign.end,
                   obscureText: widget.isPassword == true ? isObsecure : false,
-
+    keyboardType:widget. keyboardType ,
                   decoration: InputDecoration(
                       hintStyle: TextStyle(
                           color: Colors.white,

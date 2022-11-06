@@ -8,8 +8,13 @@ import 'package:get/get.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 
 class VerifyScreen extends StatelessWidget {
-  const VerifyScreen({super.key});
-
+   VerifyScreen({
+    Key? key,
+    required this.verificationId,
+    required this.token
+  }) : super(key: key);
+String verificationId;
+String token;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
