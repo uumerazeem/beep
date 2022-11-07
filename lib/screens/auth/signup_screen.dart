@@ -1,3 +1,4 @@
+import 'package:asignment/controllers/auth_Controller.dart';
 import 'package:asignment/controllers/lang_controller.dart';
 import 'package:asignment/screens/auth/verification_screen.dart';
 import 'package:asignment/utils/app_colors.dart';
@@ -6,16 +7,21 @@ import 'package:asignment/utils/app_images.dart';
 import 'package:asignment/widgets/app_bar_button.dart';
 import 'package:asignment/widgets/custom_input_field.dart';
 import 'package:asignment/widgets/full_width_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class SignUpScreen extends StatelessWidget {
-   SignUpScreen({super.key});
+  SignUpScreen({super.key});
   LanguageController languageController = Get.find();
+  AuthController authController = Get.find();
 
+  TextEditingController fullName = TextEditingController();
+  TextEditingController number = TextEditingController();
+  TextEditingController pass = TextEditingController();
+  TextEditingController confirmPass = TextEditingController();
+  final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,11 +87,13 @@ class SignUpScreen extends StatelessWidget {
               ),
             ),
             Padding(
-               padding: EdgeInsets.symmetric(horizontal: 20.r),
+              padding: EdgeInsets.symmetric(horizontal: 20.r),
               child: Column(
                 children: [
                   Align(
-                    alignment: languageController.isEnglish.value?  Alignment.topLeft  : Alignment.topRight,
+                    alignment: languageController.isEnglish.value
+                        ? Alignment.topLeft
+                        : Alignment.topRight,
                     child: Text.rich(
                       textAlign: TextAlign.left,
                       TextSpan(children: [
@@ -94,73 +102,115 @@ class SignUpScreen extends StatelessWidget {
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 24.sp,
-                              fontFamily: languageController.isEnglish.value? "Poppins-Regular":  "NotoKufiArabic-Bold"),
+                              fontFamily: languageController.isEnglish.value
+                                  ? "Poppins-Regular"
+                                  : "NotoKufiArabic-Bold"),
                         ),
                         TextSpan(
                           text: " Beep Alla Beep".tr,
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 24.sp,
-                              fontFamily:languageController.isEnglish.value?  "Poppins-Semibold":  "NotoKufiArabic-Bold"),
+                              fontFamily: languageController.isEnglish.value
+                                  ? "Poppins-Semibold"
+                                  : "NotoKufiArabic-Bold"),
                         ),
                       ], style: const TextStyle(height: 1.2)),
                     ),
                   ),
-                 
-                 SizedBox(
-                  height: 25.h,
-                 ),
+                  SizedBox(
+                    height: 25.h,
+                  ),
                   Align(
-                    alignment: languageController.isEnglish.value?  Alignment.topLeft  : Alignment.topRight,
+                    alignment: languageController.isEnglish.value
+                        ? Alignment.topLeft
+                        : Alignment.topRight,
                     child: Text(
-                      "Please fill out the form below to Register on Beep Alla Beep?".tr,
+                      "Please fill out the form below to Register on Beep Alla Beep?"
+                          .tr,
                       style: TextStyle(
                           color: AppColor.offWhite,
-                          fontSize:languageController.isEnglish.value? 16.sp :24.sp,
-                          fontFamily: languageController.isEnglish.value? "Poppins-Regular": "Arabic-Regular"),
+                          fontSize: languageController.isEnglish.value
+                              ? 16.sp
+                              : 24.sp,
+                          fontFamily: languageController.isEnglish.value
+                              ? "Poppins-Regular"
+                              : "Arabic-Regular"),
                     ),
                   ),
-                  Column(
-                    children: [
-                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20.r),
-                         child: CustomInputField(
-                          fieldIcon: Image.asset(
-                            AppIcon.person,
-                            height: 16.h,
-                            width: 16.w,
+                  Form(
+                    key: formKey,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.r),
+                          child: CustomInputField(
+                            keyboardType: TextInputType.name,
+                            controller: fullName,
+                            fieldIcon: Image.asset(
+                              AppIcon.person,
+                              height: 16.h,
+                              width: 16.w,
+                            ),
+                            hintText: 'Full Name'.tr,
+                            isEnglish: true,
+                            isPassword: false,
+                            validator: (text) {
+                              if (text == null || text.isEmpty) {
+                                return 'Can\'t be empty';
+                              }
+                              if (RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%0-9-]')
+                                  .hasMatch(text)) {
+                                return "Numbers or Special character not allowed";
+                              }
+                              return null;
+                            },
                           ),
-                          hintText: 'Full Name'.tr,
+                        ),
+                        CustomInputField(
+                          keyboardType: TextInputType.phone,
+                          controller: number,
+                          fieldIcon: Image.asset(
+                            AppIcon.phone,
+                            height: 22.h,
+                            width: 14.w,
+                          ),
+                          hintText: '(0)',
                           isEnglish: true,
                           isPassword: false,
-                      ),
-                       ),
-
-                      CustomInputField(
-                        fieldIcon: Image.asset(
-                          AppIcon.phone,
-                          height: 22.h,
-                          width: 14.w,
+                          isPhone: true,
+                          validator: (text) {
+                            RegExp _regExp = RegExp(r'^[0-9]+$');
+                            if (text == null || text.isEmpty) {
+                              return 'Can\'t be empty';
+                            }
+                            // if (_regExp.hasMatch(text)) {
+                            //   return "Enter numbers only";
+                            // }
+                            if (text.length > 10) {
+                              return "Pakistani number without 0/+92";
+                            }
+                            return null;
+                          },
                         ),
-                        hintText: '(0)',
-                        isEnglish: true,
-                        isPassword: false,
-                        isPhone: true,
-                      ),
-                      Padding(
-                         padding: EdgeInsets.symmetric(vertical: 20.r),
-                        child: CustomInputField(
-                          fieldIcon: Image.asset(
-                            AppIcon.lock,
-                            height: 21.h,
-                            width: 16.w,
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.r),
+                          child: CustomInputField(
+                            keyboardType: TextInputType.text,
+                            controller: pass,
+                            fieldIcon: Image.asset(
+                              AppIcon.lock,
+                              height: 21.h,
+                              width: 16.w,
+                            ),
+                            hintText: 'Password'.tr,
+                            isEnglish: true,
+                            isPassword: true,
                           ),
-                          hintText: 'Password'.tr,
-                          isEnglish: true,
-                          isPassword: true,
                         ),
-                      ),
-                      CustomInputField(
+                        CustomInputField(
+                          keyboardType: TextInputType.text,
+                          controller: confirmPass,
                           fieldIcon: Image.asset(
                             AppIcon.lockClock,
                             height: 21.h,
@@ -170,100 +220,117 @@ class SignUpScreen extends StatelessWidget {
                           isEnglish: true,
                           isPassword: true,
                         ),
-                      
-                    ],
-                  ),
-                  
-             languageController.isEnglish.value== false? SizedBox(height: 20.r,):     Padding(
-                  padding: EdgeInsets.symmetric(vertical: 30.r),
-                    child: Text.rich(
-                      textAlign: TextAlign.left,
-                      TextSpan(children: [
-                        TextSpan(
-                          text: "By signing up you agree with our",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.sp,
-                              fontFamily: "Poppins-Regular"),
-                        ),
-                        TextSpan(
-                          text: " Privacy Policy",
-                          style: TextStyle(
-                              color: AppColor.scondary,
-                              fontSize: 16.sp,
-                              fontFamily: "Poppins-Semibold"),
-                        ),
-                        TextSpan(
-                          text: " and",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.sp,
-                              fontFamily: "Poppins-Regular"),
-                        ),
-                        TextSpan(
-                          text: " Terms & Conditions",
-                          style: TextStyle(
-                              color: AppColor.scondary,
-                              fontSize: 16.sp,
-                              fontFamily: "Poppins-Semibold"),
-                        ),
-                      ], style: const TextStyle(height: 1.2)),
+                      ],
                     ),
                   ),
-                  FullWidthButton(buttonName: "Sign Up".tr, onPressed: () {
-
-                    Get.to(VerifyScreen());
-
-
+                  languageController.isEnglish.value == false
+                      ? SizedBox(
+                          height: 20.r,
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(vertical: 30.r),
+                          child: Text.rich(
+                            textAlign: TextAlign.left,
+                            TextSpan(children: [
+                              TextSpan(
+                                text: "By signing up you agree with our",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.sp,
+                                    fontFamily: "Poppins-Regular"),
+                              ),
+                              TextSpan(
+                                text: " Privacy Policy",
+                                style: TextStyle(
+                                    color: AppColor.scondary,
+                                    fontSize: 16.sp,
+                                    fontFamily: "Poppins-Semibold"),
+                              ),
+                              TextSpan(
+                                text: " and",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.sp,
+                                    fontFamily: "Poppins-Regular"),
+                              ),
+                              TextSpan(
+                                text: " Terms & Conditions",
+                                style: TextStyle(
+                                    color: AppColor.scondary,
+                                    fontSize: 16.sp,
+                                    fontFamily: "Poppins-Semibold"),
+                              ),
+                            ], style: const TextStyle(height: 1.2)),
+                          ),
+                        ),
+                  Obx(() {
+                    return authController.signUpLoading.value == true
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColor.scondary,
+                            ),
+                          )
+                        : FullWidthButton(
+                            buttonName: "Sign Up".tr,
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                if (pass.text.trim() ==
+                                    confirmPass.text.trim()) {
+                                  authController.signUp(number.text.trim(),
+                                      fullName.text.trim(), pass.text.trim());
+                                } else {
+                                  Get.snackbar(
+                                      "Error", "Password cannot be matched");
+                                }
+                              } else {
+                                Get.snackbar("Error", "Enter valid form");
+                              }
+                            });
                   }),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 40.r),
                     child: InkWell(
-                      onTap: (){
-                        Get.back();
-                      },
-                      child: 
-                      languageController.isEnglish.value?
-                      
-                      Text.rich(
-                        textAlign: TextAlign.left,
-                        TextSpan(children: [
-                          TextSpan(
-                            text: "Already have an account?",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.sp,
-                                fontFamily: "Poppins-Regular"),
-                          ),
-                          TextSpan(
-                            text: " Sign In",
-                            style: TextStyle(
-                                color: AppColor.scondary,
-                                fontSize: 16.sp,
-                                fontFamily: "Poppins-Semibold"),
-                          ),
-                        ], style: const TextStyle(height: 1.2)),
-                      ):
-                      Text.rich(
-                    
-                        TextSpan(children: [
-                          TextSpan(
-                            text: " هل لديك حساب؟",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.sp,
-                                fontFamily: "Poppins-Regular"),
-                          ),
-                          TextSpan(
-                            text: "تسجيل الدخول",
-                            style: TextStyle(
-                                color: AppColor.scondary,
-                                fontSize: 16.sp,
-                                fontFamily: "Poppins-Semibold"),
-                          ),
-                        ], style: const TextStyle(height: 1.2)),
-                      )
-                    ),
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: languageController.isEnglish.value
+                            ? Text.rich(
+                                textAlign: TextAlign.left,
+                                TextSpan(children: [
+                                  TextSpan(
+                                    text: "Already have an account?",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16.sp,
+                                        fontFamily: "Poppins-Regular"),
+                                  ),
+                                  TextSpan(
+                                    text: " Sign In",
+                                    style: TextStyle(
+                                        color: AppColor.scondary,
+                                        fontSize: 16.sp,
+                                        fontFamily: "Poppins-Semibold"),
+                                  ),
+                                ], style: const TextStyle(height: 1.2)),
+                              )
+                            : Text.rich(
+                                TextSpan(children: [
+                                  TextSpan(
+                                    text: " هل لديك حساب؟",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16.sp,
+                                        fontFamily: "Poppins-Regular"),
+                                  ),
+                                  TextSpan(
+                                    text: "تسجيل الدخول",
+                                    style: TextStyle(
+                                        color: AppColor.scondary,
+                                        fontSize: 16.sp,
+                                        fontFamily: "Poppins-Semibold"),
+                                  ),
+                                ], style: const TextStyle(height: 1.2)),
+                              )),
                   ),
                 ],
               ),

@@ -1,3 +1,4 @@
+import 'package:asignment/controllers/auth_Controller.dart';
 import 'package:asignment/utils/app_colors.dart';
 import 'package:asignment/utils/app_images.dart';
 import 'package:asignment/widgets/app_bar_button.dart';
@@ -8,8 +9,17 @@ import 'package:get/get.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 
 class VerifyScreen extends StatelessWidget {
-  const VerifyScreen({super.key});
-
+  VerifyScreen(
+      {Key? key,
+      required this.verificationId,
+      required this.token,
+      required this.phoneN})
+      : super(key: key);
+  String verificationId;
+  String token;
+  String phoneN;
+  TextEditingController? pin = TextEditingController();
+  AuthController authController = Get.find();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -178,7 +188,8 @@ class VerifyScreen extends StatelessWidget {
                     ),
                   ),
                   PinInputTextField(
-                    pinLength: 5,
+                    pinLength: 6,
+                    controller: pin,
                     decoration: BoxLooseDecoration(
                       strokeColorBuilder: PinListenColorBuilder(
                           AppColor.purple, AppColor.purple),
@@ -195,12 +206,18 @@ class VerifyScreen extends StatelessWidget {
                       buttonName: "Verify",
                       onPressed: () {
                         // Get.to(VerifyScreen());
+                        if (pin!.text.trim().length < 7) {
+                          authController.verifyUser(
+                              verificationId, pin!.text.trim());
+                        } else {
+                          Get.snackbar("Error", "Enter 6 digit number");
+                        }
                       }),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 40.r),
                     child: InkWell(
                       onTap: () {
-                        Get.back();
+                        authController.sendNumber(phoneN, false);
                       },
                       child: Text.rich(
                         textAlign: TextAlign.left,

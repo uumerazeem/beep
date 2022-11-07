@@ -10,15 +10,18 @@ class CustomInputField extends StatefulWidget {
   bool isEnglish;
   bool isPassword;
   bool? isPhone;
+  String? Function(String?)? validator;
   TextEditingController? controller = TextEditingController();
-
+  TextInputType? keyboardType;
   CustomInputField(
       {Key? key,
       required this.fieldIcon,
       required this.hintText,
       required this.isEnglish,
       required this.isPassword,
+      this.validator,
       this.controller,
+      this.keyboardType,
       this.isPhone})
       : super(key: key);
 
@@ -46,12 +49,11 @@ class _CustomInputFieldState extends State<CustomInputField> {
             widget.isEnglish
                 ? Expanded(
                     flex: 1,
-                    child:  Container(
-                      height: 60.h,
-                      width: 60.w,
-                      color: AppColor.scondary,
-                      child: Center(child: widget.fieldIcon))
-                  )
+                    child: Container(
+                        height: 60.h,
+                        width: 60.w,
+                        color: AppColor.scondary,
+                        child: Center(child: widget.fieldIcon)))
                 : SizedBox(),
             Expanded(
               flex: 5,
@@ -61,12 +63,14 @@ class _CustomInputFieldState extends State<CustomInputField> {
                     borderRadius:
                         BorderRadius.only(topRight: Radius.circular(8.r))),
                 height: 60.h,
-                child: TextField(
+                child: TextFormField(
                   //TestField
+
                   controller: widget.controller,
                   textAlign: widget.isEnglish ? TextAlign.start : TextAlign.end,
                   obscureText: widget.isPassword == true ? isObsecure : false,
-
+                  keyboardType: widget.keyboardType,
+                  validator: widget.validator,
                   decoration: InputDecoration(
                       hintStyle: TextStyle(
                           color: Colors.white,
@@ -81,15 +85,15 @@ class _CustomInputFieldState extends State<CustomInputField> {
                           widget.isPhone == null || widget.isPhone == false
                               ? null
                               : Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
                                     "+996",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 16.sp,
                                         fontFamily: "Poppins-Regular"),
                                   ),
-                              ),
+                                ),
                       suffixIcon: widget.isPassword == true
                           ? GestureDetector(
                               onTap: () {

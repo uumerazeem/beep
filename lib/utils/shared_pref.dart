@@ -16,4 +16,14 @@ class PreferencesService {
 
     return isEnglish;
   }
+
+  static saveUserName(String? name) async {
+    await sharedPreferences?.setString('name', name!);
+  }
+
+  static String? getUserName() {
+    String? name = sharedPreferences?.getString('name');
+
+    return name;
+  }
 }

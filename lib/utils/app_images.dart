@@ -10,5 +10,14 @@ class AppImages {
   static const String signUpPic = "assets/images/signUpPic.png";
   static const String carWash = "assets/images/carWash.png";
   static const String verifyBanner = "assets/images/verifyBanner.png";
+  static const String wallet = "assets/images/wallet.png";
+  static const String greenBox = "assets/images/greenBox.png";
+ static const String sunImage = "assets/images/sun.png";
+  static const String mapgoogle = "assets/images/map.png";
+  static const String bmwicon = "assets/images/bmwicon.png";
+  static const String bmwimage = "assets/images/bmwimage.png";
+  static const String carIcon = "assets/images/caricon.png";
+    static const String personImage = "assets/images/person.png";
+    static const String marker = "assets/images/marker.png";
 
 }
