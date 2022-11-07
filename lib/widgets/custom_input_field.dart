@@ -12,7 +12,7 @@ class CustomInputField extends StatefulWidget {
   bool? isPhone;
   String? Function(String?)? validator;
   TextEditingController? controller = TextEditingController();
-  TextInputType? keyboardType;
+TextInputType? keyboardType;
   CustomInputField(
       {Key? key,
       required this.fieldIcon,

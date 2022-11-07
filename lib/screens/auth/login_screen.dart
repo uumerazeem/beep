@@ -27,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   LanguageController languageController = Get.find();
   AuthController authController = Get.put(AuthController());
   final formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
