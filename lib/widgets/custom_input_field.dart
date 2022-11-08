@@ -32,7 +32,13 @@ TextInputType? keyboardType;
 class _CustomInputFieldState extends State<CustomInputField> {
   final bool _validate = false;
 
-  bool isObsecure = false;
+  bool? isObsecure ;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isObsecure = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +74,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
 
                   controller: widget.controller,
                   textAlign: widget.isEnglish ? TextAlign.start : TextAlign.end,
-                  obscureText: widget.isPassword == true ? isObsecure : false,
+                  obscureText: widget.isPassword == true ? isObsecure! : false,
                   keyboardType: widget.keyboardType,
                   validator: widget.validator,
                   decoration: InputDecoration(
@@ -98,7 +104,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
                           ? GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  isObsecure = !isObsecure;
+                                  isObsecure = !isObsecure!;
                                 });
                               },
                               child: Icon(

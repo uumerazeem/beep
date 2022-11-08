@@ -6,18 +6,25 @@ import 'package:asignment/screens/tabscreen/home.dart';
 import 'package:asignment/screens/tabscreen/mycar_screen.dart';
 import 'package:asignment/services/i18n.dart';
 import 'package:asignment/utils/shared_pref.dart';
+import 'package:asignment/utils/stripe_config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
-void main()async {
-   WidgetsFlutterBinding.ensureInitialized();
- await PreferencesService.initializeStorage();
- await Firebase.initializeApp(
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = StripeConfig.publishableKey;
+  Stripe.merchantIdentifier ="test";
+
+  await Stripe.instance.applySettings();
+
+  await PreferencesService.initializeStorage();
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
+  );
   runApp(const MyApp());
 }
 
@@ -34,18 +41,17 @@ class MyApp extends StatelessWidget {
     ));
     return ScreenUtilInit(
       designSize: const Size(430, 932),
-    
       builder: (BuildContext context, Widget? child) {
         return GetMaterialApp(
           translations: Translation(),
-          locale: const Locale("en","US"),
-          fallbackLocale: const Locale("en","US"),
-        debugShowCheckedModeBanner: false,
+          locale: const Locale("en", "US"),
+          fallbackLocale: const Locale("en", "US"),
+          debugShowCheckedModeBanner: false,
           title: 'Beep',
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home:  LandingScreen(),
+          home: SplashScreen(),
         );
       },
     );

@@ -1,8 +1,12 @@
+import 'dart:developer';
 
 import 'package:asignment/screens/tabscreen/mycar_screen.dart';
+import 'package:asignment/services/weather_service.dart';
 import 'package:asignment/utils/app_colors.dart';
 import 'package:asignment/utils/app_images.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -16,16 +20,27 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  MapController mapController = Get.put(MapController());
+  MapController mapController = Get.find();
+Map<String,dynamic>? weatherData = {};
+  getCityName(double lat, double lng) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        lat,
+        lng,
+      );
+      Placemark placemark = placemarks[0];
+      log(placemark.country.toString());
 
+       weatherData = await Weather().getWeather(placemark.country.toString());
+      log("in the " + weatherData.toString());
+    } catch (err) {}
+  }
 
-
+  int count = 0;
   mapListener() async {
-
     mapController.marker =
         await MapController.getBytesFromAsset(AppImages.marker, 60, 100);
     mapController.location.onLocationChanged.listen((l) async {
-
       // if (isNavigationStarted == true) {
       //   print("Navigation is started");
       //   mapController.getPolyline();
@@ -53,12 +68,15 @@ class _HomeScreenState extends State<HomeScreen> {
           BitmapDescriptor.fromBytes(mapController.marker!));
       mapController.la = l.latitude!;
       mapController.lo = l.longitude!;
-
       mapController.updateCameraPosition();
+      if (count == 0) {
+        getCityName(l.latitude!, l.longitude!);
+      }
+      count++;
     });
   }
 
- Map<MarkerId, Marker> markers = {};
+  Map<MarkerId, Marker> markers = {};
   @override
   void initState() {
     // TODO: implement initState
@@ -66,6 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
     mapListener();
     markerListener();
   }
+ 
   markerListener() {
     mapController.markers.listen((p0) {
       if (this.mounted) {
@@ -98,41 +117,106 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   imageWidget(),
-                  sunWidget(),
+               weatherData!["current"].toString() =="null"?
+               SizedBox()
+               :   sunWidget(weatherData!["current"].toString(), weatherData!["region"].toString()),
                 ],
               ),
             ),
           ),
           Expanded(
             child: ClipRRect(
-               borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.red,
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20),
                   ),
-                  
                 ),
-            
-                child: Stack(children: [
-                  GoogleMap(
-              zoomControlsEnabled: false,
-              mapType: MapType.terrain,
-              scrollGesturesEnabled: true,
-                    markers: Set<Marker>.of(markers.values),
-              initialCameraPosition: mapController.kGooglePlex!,
-              onMapCreated: (GoogleMapController controller) {
-                mapController.mapsController.complete(controller);
-              },
+                child: Stack(
+                  children: [
+
+                    GoogleMap(
+                      
+                      zoomControlsEnabled: false,
+                      mapType: MapType.terrain,
+                      scrollGesturesEnabled: true,
+                      markers: Set<Marker>.of(markers.values),
+                      initialCameraPosition: mapController.kGooglePlex!,
+                      onMapCreated: (GoogleMapController controller) {
+                        mapController.mapsController.complete(controller);
+                      },
+                    ),
+                    Positioned(
+                      top: 10,
+                      left: 10,
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                          onTap: (){
+                              
+                          },
+                          child: Container(
+                            height: 34,
+                            width: 34,
+                            decoration: BoxDecoration(
+                              color: AppColor.scondary,
+                              borderRadius: BorderRadius.circular(5.r)
+                                            
+                            ),
+                            child: Icon(Icons.search, color: Colors.white,),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10.w,
+                        ),
+                        GestureDetector(
+                          onTap: ()async{
+                          await  mapController.updateCameraPosition();
+                            
+                          
+                              
+                          },
+                          child: Container(
+                            height: 34,
+                            width: 34,
+                            decoration: BoxDecoration(
+                              color: AppColor.scondary,
+                              borderRadius: BorderRadius.circular(5.r)
+                                            
+                            ),
+                            child: Icon(Icons.star, color: Colors.white,),
+                          ),
+                        ),
+                        ],
                       ),
-            
-                ],),
+                    ),
+                    Positioned(
+                      bottom: 100,
+                      right: 10,
+                      child: GestureDetector(
+                        onTap: (){
+                        
+                        },
+                        child: Container(
+                          height: 34,
+                          width: 34,
+                          decoration: BoxDecoration(
+                            color: AppColor.scondary,
+                            borderRadius: BorderRadius.circular(5.r)
+                                          
+                          ),
+                          child: Icon(Icons.my_location, color: Colors.white,),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -191,7 +275,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget sunWidget() {
+  Widget sunWidget(
+    String degree,
+    String region
+  ) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -225,7 +312,10 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               width: 90,
               height: 90,
-              child: Image(
+              child:
+              
+              
+               Image(
                 image: AssetImage(AppImages.sunImage),
               ),
             ),
@@ -237,13 +327,13 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '40 C',
+                  '$degree C',
                   style: TextStyle(
                     color: Colors.white,
                   ),
                 ),
                 Text(
-                  'Riyadh',
+                  '$region',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 21,

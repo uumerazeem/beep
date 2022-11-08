@@ -202,17 +202,27 @@ class VerifyScreen extends StatelessWidget {
                   SizedBox(
                     height: 30.h,
                   ),
-                  FullWidthButton(
+                  Obx((){
+                    return authController.verifyLoading.value ==true?
+                    Center(
+                      child: CircularProgressIndicator(
+                        color: AppColor.scondary,
+                      ),
+                    )
+                    :
+                    FullWidthButton(
                       buttonName: "Verify",
                       onPressed: () {
                         // Get.to(VerifyScreen());
                         if (pin!.text.trim().length < 7) {
                           authController.verifyUser(
-                              verificationId, pin!.text.trim());
+                              verificationId, pin!.text.trim(), phoneN);
                         } else {
                           Get.snackbar("Error", "Enter 6 digit number");
                         }
-                      }),
+                      });
+                  }),
+                  
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 40.r),
                     child: InkWell(

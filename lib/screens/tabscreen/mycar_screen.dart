@@ -26,7 +26,7 @@ class _MyCarsScreenState extends State<MyCarsScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(
-              top: 70.0,
+              top: 47.0,
               left: 20.0,
               // right: 20.0,
               bottom: 20,
@@ -35,6 +35,17 @@ class _MyCarsScreenState extends State<MyCarsScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Container(
+                  width: 75,
+                  height: 34,
+                  margin: EdgeInsets.only(right: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  
+                ),
+             
                 Expanded(child: Container()),
                 Text(
                   'My Cars',
@@ -43,10 +54,8 @@ class _MyCarsScreenState extends State<MyCarsScreen> {
                     fontSize: 19,
                   ),
                 ),
-                // Expanded(child: Container()),
-                Container(
-                  width: 160,
-                ),
+                Expanded(child: Container()),
+               
                 Container(
                   width: 75,
                   height: 34,
@@ -73,12 +82,13 @@ class _MyCarsScreenState extends State<MyCarsScreen> {
                     ],
                   ),
                 )
+             
               ],
             ),
           ),
           Expanded(
             child: Container(
-              padding: EdgeInsets.only(bottom: 30.r),
+                padding: EdgeInsets.only(bottom: 30.r),
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                   color: AppColor.offWhite,
@@ -87,38 +97,42 @@ class _MyCarsScreenState extends State<MyCarsScreen> {
                     topRight: Radius.circular(20),
                   ),
                 ),
-                child: Obx(() {
-                  return carController.loading.value == true
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            color: AppColor.scondary,
-                          ),
-                        )
-                      : carController.carDataList.length == 0
-                          ? Center(
-                              child: Text("No data.."),
-                            )
-                          : Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20.r),
-                              child: ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                  itemCount: carController.carDataList.length,
-                                  itemBuilder: (context, index) {
-                                    CarModel data =
-                                        carController.carDataList[index];
-                                    return singleWidget(data.image, data.title!, data.price!);
-                                  }),
-                            );
-                })),
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 80.r),
+                  child: Obx(() {
+                    return carController.loading.value == true
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: AppColor.scondary,
+                            ),
+                          )
+                        : carController.carDataList.length == 0
+                            ? Center(
+                                child: Text("No data.."),
+                              )
+                            : Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20.r),
+                                child: ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    itemCount: carController.carDataList.length,
+                                    itemBuilder: (context, index) {
+                                      CarModel data =
+                                          carController.carDataList[index];
+                                      return singleWidget(
+                                          data.image, data.title!, data.price!);
+                                    }),
+                              );
+                  }),
+                )),
           ),
-        
-        
         ],
       ),
+   
+   
     );
   }
 
-  Widget singleWidget(String? image ,String title, String price) {
+  Widget singleWidget(String? image, String title, String price) {
     log(image!);
     return Container(
       width: 390,
@@ -136,9 +150,16 @@ class _MyCarsScreenState extends State<MyCarsScreen> {
               height: 106.h,
               width: 106.w,
               errorWidget: (context, url, error) => Icon(Icons.error),
-              imageUrl: "https://fakestoreapi.com/img/51Y5NI-I5jL._AC_UX679_.jpg",
-              placeholder: (context, url) => CircularProgressIndicator(
-                color: Colors.grey,
+              imageUrl:
+                  image,
+              placeholder: (context, url) => SizedBox(
+                height: 30.h,
+                width: 30.w,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AppColor.scondary,
+                  ),
+                ),
               ),
             ),
           ),
@@ -198,7 +219,7 @@ class _MyCarsScreenState extends State<MyCarsScreen> {
             SizedBox(
               width: 200.w,
               child: Text(
-                '$title',
+                title,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 12,

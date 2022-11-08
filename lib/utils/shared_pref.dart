@@ -26,4 +26,13 @@ class PreferencesService {
 
     return name;
   }
+   static saveLogged(String? logged) async {
+    await sharedPreferences?.setString('logged', logged!);
+  }
+
+  static String? getLogged() {
+    String? logged = sharedPreferences?.getString('logged');
+
+    return logged;
+  }
 }

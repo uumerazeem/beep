@@ -89,4 +89,6 @@ class MapController extends GetxController {
         .asUint8List();
   }
 
+ 
+
 }

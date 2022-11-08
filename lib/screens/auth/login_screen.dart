@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -45,6 +46,9 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
   }
+
+  TextEditingController phone = TextEditingController();
+  TextEditingController password = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -86,19 +90,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 43.h,
                     ),
                   ),
+                  
                   Positioned(
-                    top: 174.h,
-                    left: 345.w,
-                    child: Image.asset(
-                      AppImages.circleWhite,
-                      width: 27.w,
-                      height: 27.h,
-                    ),
-                  ),
-                  Positioned(
-                    left: 0.w,
+                    left:0.w, 
                     top: 179.h,
-                    child: Container(
+                    
+                    child:startAnimation == false
+                            ? Container(
                       width: MediaQuery.of(context).size.width * 0.92,
                       height: MediaQuery.of(context).size.height * 0.35,
                       decoration: const BoxDecoration(
@@ -120,8 +118,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       //           fit: BoxFit.fill,
                       //         ),
                       // ),
-                    ),
+                    ):Lottie.asset('assets/raw.json', 
+                    repeat: false,
+                  
+                    // frameRate: FrameRate(20),
+                     width: MediaQuery.of(context).size.width ,
+                      height: MediaQuery.of(context).size.height * 0.35,)
+                    ,
                   )
+               ,Positioned(
+                    top: 174.h,
+                    left: 345.w,
+                    child: Image.asset(
+                      AppImages.circleWhite,
+                      width: 27.w,
+                      height: 27.h,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -176,6 +189,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Padding(
                                   padding: EdgeInsets.symmetric(vertical: 20.r),
                                   child: CustomInputField(
+                                    controller: phone,
+                                    keyboardType: TextInputType.number,
                                     fieldIcon: Image.asset(
                                       AppIcon.phone,
                                       height: 22.h,
@@ -188,6 +203,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 CustomInputField(
+                                  controller: password,
+                                  keyboardType: TextInputType.text,
                                   fieldIcon: Image.asset(
                                     AppIcon.lock,
                                     height: 21.h,
@@ -202,29 +219,52 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     height: 25.h,
                   ),
-                  FullWidthButton(
-                    onPressed: startAnimation == false
-                        ? () {
-                            setState(() {
-                              startAnimation = true;
-                            });
+                  Obx(() {
+                    return authController.signInLoading.value == true
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: AppColor.scondary,
+                            ),
+                          )
+                        : FullWidthButton(
+                            onPressed: startAnimation == false
+                                ? () {
+                                    setState(() {
+                                      startAnimation = true;
+                                    });
 
-                            languageController.changeLanguage(
-                                languageController.isEnglish.value
-                                    ? "en"
-                                    : "ar",
-                                languageController.isEnglish.value
-                                    ? "US"
-                                    : "SA");
-                          }
-                        : () {
-                            setState(() {
-                              startAnimation = false;
-                            });
-                          },
-                    buttonName:
-                        startAnimation == false ? "Continue" : "Login".tr,
-                  ),
+                                    languageController.changeLanguage(
+                                        languageController.isEnglish.value
+                                            ? "en"
+                                            : "ar",
+                                        languageController.isEnglish.value
+                                            ? "US"
+                                            : "SA");
+                                  }
+                                : () {
+                                    if (phone.text != "") {
+                                      if (password.text != "") {
+                                        if (password.text.length > 7) {
+                                          authController.login(
+                                              phone.text, password.text);
+                                        } else {
+                                          Get.snackbar("Invalid",
+                                              "Password length must 8 or greater");
+                                        }
+                                      } else {
+                                        Get.snackbar(
+                                            "Missing", "Password missing");
+                                      }
+                                    } else {
+                                      Get.snackbar(
+                                          "Missing", "Phone number missing");
+                                    }
+                                  },
+                            buttonName: startAnimation == false
+                                ? "Continue"
+                                : "Login".tr,
+                          );
+                  }),
                   startAnimation == false
                       ? SizedBox()
                       : Column(
